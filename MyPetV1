@@ -1,0 +1,187 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+class Mascota {
+private:
+    string nombre;
+    int energia;
+    int hambre;
+    int felicidad;
+
+public:
+    // Constructor
+    Mascota(string _nombre, int _energia, int _hambre, int _felicidad) {
+        setNombre(_nombre);
+        setEnergia(_energia);
+        setHambre(_hambre);
+        setFelicidad(_felicidad);
+    }
+
+    // Getters
+    string getNombre() const { return nombre; }
+    int getEnergia() const { return energia; }
+    int getHambre() const { return hambre; }
+    int getFelicidad() const { return felicidad; }
+
+    // Setters individuales con validaciones
+    void setNombre(string _nombre) { nombre = _nombre; }
+
+    void setEnergia(int nuevaEnergia) { 
+        if (nuevaEnergia < 0) energia = 0; 
+        else if (nuevaEnergia > 100) energia = 100;
+        else energia = nuevaEnergia;
+    }
+    
+    void setHambre(int nuevoHambre) { 
+        if (nuevoHambre < 0) hambre = 0;   // Evita valores negativos
+        else if (nuevoHambre > 100) hambre = 100; // Límite máximo
+        else hambre = nuevoHambre;
+    }    
+
+    void setFelicidad(int nuevaFelicidad) { 
+        if (nuevaFelicidad < 0) felicidad = 0;
+        else if (nuevaFelicidad > 100) felicidad = 100;
+        else felicidad = nuevaFelicidad;
+    }
+
+    // Método para mostrar el estado de la mascota
+    void getEstado() const {
+        SetConsoleOutputCP(CP_UTF8);
+        cout << "Nombre: " << nombre << endl
+             << "Energia: " << energia << endl 
+             << "Hambre: " << hambre << endl
+             << "Felicidad: " << felicidad << endl;
+        if (hambre > 80) cout << "Tengo hambre (ᗒᗣᗕ)՞" << endl;
+        if (energia < 10) cout << "Estoy muy cansado (｡•́︿•̀｡)" << endl;
+        if (felicidad < 10) cout << "Juguemos (◞ ‸ ◟)" << endl;
+    }
+
+    // Método para alimentar a la mascota
+    void comer() {
+        int opcion;
+        string pregunta;
+    
+        do {
+            system("cls");
+    
+            if (hambre == 0) {
+                cout << "Tu mascota no tiene hambre en este momento.\n";
+                return;
+            }
+    
+            cout << "\nAlimentos disponibles:\n";
+            cout << "1. Banano (-10 hambre, +10 energia)\n";
+            cout << "2. Tarta de jamon (-30 hambre, +30 energia)\n";
+            cout << "3. Tortillas (-5 hambre, +5 energia)\n";
+            cout << "4. Concentrado (-50 hambre, +50 energia)\n";
+    
+            cout << "Selecciona una opcion (1-4): ";
+            cin >> opcion;
+    
+            // Validación de entrada
+            if (cin.fail()) {
+                cin.clear();  // Restablece el estado de cin
+                cin.ignore(10000, '\n');  // Limpia el buffer de entrada
+                cout << "Entrada inválida. Inténtalo de nuevo.\n";
+                Sleep(1000);
+                continue;
+            }
+    
+            switch (opcion) {
+                case 1: setHambre(hambre - 10); setEnergia(energia + 10); break;
+                case 2: setHambre(hambre - 30); setEnergia(energia + 30); break;
+                case 3: setHambre(hambre - 5); setEnergia(energia + 5); break;
+                case 4: setHambre(hambre - 50); setEnergia(energia + 50); break;
+                default:
+                    cout << "Opción no válida. Inténtalo de nuevo.\n";
+                    Sleep(1000);
+                    continue;
+            }
+            
+            // Preguntar si quiere seguir alimentando
+            cout << "¿Seguir alimentando? (SI - NO): ";
+            cin >> pregunta;
+            cin.ignore(10000, '\n');  // Ignorar cualquier entrada adicional
+        
+        } while (pregunta != "NO");
+    
+        cout << "Gracias por alimentarme (^o^)\n";
+    }
+    
+    void jugar() {
+        if (energia <= 15) { cout << nombre << " esta muy cansado. Vuelve mas tarde " << endl; return; }
+        if (hambre >= 80) { cout << nombre << " tiene mucha hambre :( " << endl; return; }
+
+        int opcion;
+        cout << "¿Que vamos a jugar hoy ✧*｡٩(ˊᗜˋ*)و✧*｡?" << endl;
+        cout << "1. Atrapar la pelota (+30 felicidad, +10 hambre, -25 energia)" << endl;
+        cout << "2. Perseguir gallinas (+40 felicidad, +20 hambre, -50 energia\n";
+        cout << "3. Escondidas (+20 felicidad, +10 hambre, -15 energia)\n";
+        cin >> opcion;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Valor no reconocido. Intentalo de nuevo" << endl;
+        }
+        switch (opcion) {
+        case 1:
+            setFelicidad(felicidad + 30); setHambre(hambre +10); setEnergia(energia - 25);break;
+        case 2: 
+            setFelicidad(felicidad + 40); setHambre(hambre +20); setEnergia(energia - 50);break;
+        case 3:
+            setFelicidad(felicidad + 20); setHambre(hambre +10); setEnergia(energia - 15);break;
+        default:
+            cout << "Opcion invalida. Por favor intentalo de nuevo\n";
+            break;
+        }
+        
+    } 
+};
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    int opcion;
+    string nombreMascota;
+    int energia = 50, hambre = 50, felicidad = 50;
+
+    cout << "Ingrese el nombre de su mascota: ";
+    cin >> nombreMascota;
+    cout << "\n";
+
+    Mascota perro(nombreMascota, energia, hambre, felicidad);
+
+    do {
+        system ("cls");
+        perro.getEstado();
+        cout << "\n Hola soy " << nombreMascota << " ¿que vamos a hacer hoy? ⸜(｡˃ ᵕ ˂ )⸝♡" << endl;
+        cout << "\n1. Comer\n";
+        cout << "2. jugar\n";
+        cout << "3. Nada\n";
+        cin >> opcion;
+        //Validamos la entrada
+        if (cin.fail()) {
+            cin.clear(); 
+            cin.ignore(10000, '\n');
+            cout << "Entrada inválida. Inténtalo de nuevo.\n";
+            continue;
+        }
+        switch (opcion) {
+        case 1:
+            perro.comer();
+            break;
+        case 2:
+            perro.jugar();
+            break;
+        case 3:
+            cout << "Nos vemos pronto （⌒▽⌒）" << endl;
+            break;
+        default:
+            cout << "Intentalo de nuevo" << endl;
+            break;
+        }
+    }while(opcion!=3);
+
+    return 0;
+}
